@@ -1,0 +1,72 @@
+代码随想录第一天:704. 二分查找, 27. 移除元素  
+
+## 704. 二分查找
+我自己理解的几个关键点：
+- 对于mid的选取
+    mid = (left + right)/2 -> 有overflow的风险 
+    mid = left + (right - left)/2 -> 没有overflow
+- 数组是左闭右开还是左闭右闭 -> 对while的调教和right的更新有影响
+    - 假如是左闭右开: while (left < right) (考虑到数组的合法性，假如$[1,1)$就是一个不合法的数组), right = mid;
+    - 假如是左闭右闭: while (left <= right), right = mid + 1; 左闭右开k
+
+    ```python
+    class Solution(object):
+        def search(self, nums, target):
+            """
+            :type nums: List[int]
+            :type target: int
+            :rtype: int
+            """
+            left = 0
+            right = len(nums) - 1
+            while left <= right:
+                mid = left + (right - left) // 2
+                if nums[mid] == target:
+                    return mid
+                elif nums[mid] < target:
+                    left = mid + 1
+                else:
+                    right = mid + 1
+    ```
+    问题:对于数组的定义是怎么决定的? Python为例,数组因为下标是从0开始的,所以nums[len(nums)]是取不到，那不应该是一个左闭右开区间吗?但代码里面还是用了左闭右闭的区间,这是为什么呢?
+
+## 27. 移除元素
+暴力解法:两个loop,但不清楚为什么在python里面size不能更新,只能用while
+```python
+class Solution(object):
+    def removeElement(self, nums, val):
+        """
+        :type nums: List[int]
+        :type val: int
+        :rtype: int
+        """
+        size = len(nums)
+        i = 0
+        while (i  < size):
+            if nums[i] == val:
+                for j in range(i+1, size):
+                    nums[j-1] = nums[j]
+                size -= 1
+                i -= 1
+            i += 1
+        return size
+```
+
+定义: - 快指针：寻找新数组的值
+     - 慢指针：更新新数组的下标
+
+```python
+class Solution(object):
+    def removeElement(self, nums, val):
+        """
+        :type nums: List[int]
+        :type val: int
+        :rtype: int
+        """
+        slow = 0
+        for fast in range(len(nums)):
+            if nums[fast] != val:
+                nums[slow] = nums[fast]
+                slow += 1
+        return slow
+```
